@@ -1,16 +1,17 @@
 package leonardo.conta_bancaria.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 import java.math.BigDecimal;
 
+@ToString
+@NoArgsConstructor
 @Getter
 @Setter
 @AllArgsConstructor
 public class Investidos {
-    int id_conta;
-    int id_investimento;
+    int idConta;
+    int idInvestimento;
     BigDecimal valor;
-    String data_investimento;
+    String dataInvestimento;
 }

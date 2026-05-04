@@ -1,13 +1,13 @@
 package leonardo.conta_bancaria.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+@ToString
+@NoArgsConstructor
 @Getter
 @Setter
 @AllArgsConstructor
 public class Transacoes {
     int id;
-    String tipo_transacao;
+    String tipoTransacao;
 }

@@ -1,17 +1,18 @@
 package leonardo.conta_bancaria.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 import java.math.BigDecimal;
 
+@ToString
+@NoArgsConstructor
 @Getter
 @Setter
 @AllArgsConstructor
 public class Movimentacoes {
-    int id_conta1;
-    int id_conta2;
-    int id_transacao;
+    int idConta1;
+    int idConta2;
+    int idTransacao;
     BigDecimal valor;
-    String data_movimentacao;
+    String dataMovimentacao;
 }

@@ -1,13 +1,13 @@
 package leonardo.conta_bancaria.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+@ToString
+@NoArgsConstructor
 @Getter
 @Setter
 @AllArgsConstructor
 public class CEP {
     String CEP;
-    int id_logradouro;
+    int idLogradouro;
 }

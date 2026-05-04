@@ -1,14 +1,14 @@
 package leonardo.conta_bancaria.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import leonardo.conta_bancaria.dao.Dao;
+import lombok.*;
 
+@ToString
+@NoArgsConstructor
 @Getter
 @Setter
 @AllArgsConstructor
 public class Estados {
-    int id;
     String estado;
     String sigla;
 }
