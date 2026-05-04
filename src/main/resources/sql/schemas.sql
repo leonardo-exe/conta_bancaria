@@ -6,25 +6,25 @@ create table estados (
 create table cidades (
     id serial primary key,
     cidade varchar(32),
-    estado_id int,
-    foreign key(estado_id) references estados(id)
+    id_estado int,
+    foreign key(id_estado) references estados(id)
 );
 create table bairros (
     id serial primary key,
     bairro varchar(32),
-    cidade_id int,
-    foreign key(cidade_id) references cidades(id)
+    id_cidade int,
+    foreign key(id_cidade) references cidades(id)
 );
 create table logradouros (
     id serial primary key,
     logradouro varchar(32),
-    bairro_id int,
-    foreign key(bairro_id) references bairros(id)
+    id_bairro int,
+    foreign key(id_bairro) references bairros(id)
 );
 create table CEP (
     CEP varchar(8) primary key,
-    logradouro_id int,
-    foreign key(logradouro_id) references logradouros(id)
+    id_logradouro int,
+    foreign key(id_logradouro) references logradouros(id)
 );
 create table enderecos (
     id serial primary key,
@@ -35,9 +35,9 @@ create table enderecos (
 );
 create table clientes (
     id serial primary key,
-    endereco_id int,
+    id_endereco int,
     tipo_pessoa varchar(1),
-    foreign key (endereco_id) references enderecos(id)
+    foreign key (id_endereco) references enderecos(id)
 );
 create table pessoa_fisica (
     id_cliente int primary key,
@@ -104,7 +104,7 @@ create table movimentacoes (
     foreign key(id_conta2) references contas(id),
     foreign key(id_transacao) references transacoes(id)
 );
-create table investido (
+create table investidos (
     id_conta int,
     id_investimento int,
     valor decimal,
