@@ -16,8 +16,4 @@ public class DaoAgencias extends Dao<Agencias> {
         return "numero_agencia";
     }
 
-    @Override
-    public int nAtributos() {
-        return 4;
-    }
 }

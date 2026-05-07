@@ -1,7 +1,9 @@
 package leonardo.conta_bancaria.dao;
 
 import leonardo.conta_bancaria.model.CEP;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class DaoCEP extends Dao<CEP> {
     @Override
     public Class<CEP> getEntity() {
@@ -13,8 +15,5 @@ public class DaoCEP extends Dao<CEP> {
         return "CEP";
     }
 
-    @Override
-    public int nAtributos() {
-        return 2;
-    }
+
 }

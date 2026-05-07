@@ -3,11 +3,13 @@ package leonardo.conta_bancaria.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public abstract class Dao<t> {
     @Autowired
     private JdbcTemplate jdbc;
@@ -17,7 +19,15 @@ public abstract class Dao<t> {
 
     public abstract String atributoSelect();
 
-    public abstract int nAtributos();
+    public int nAtributos() {
+        try {
+            Field[] fields = getEntity().getDeclaredFields();
+            return fields.length;
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return 0;
+        }
+    }
 
     public String to_snake_case(String str) {
         String result = "";

@@ -1,10 +1,9 @@
 package leonardo.conta_bancaria.dao;
 
 import leonardo.conta_bancaria.model.Investidos;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
+@Repository
 public class DaoInvestidos extends Dao<Investidos> {
     @Override
     public Class<Investidos> getEntity() {
@@ -16,8 +15,4 @@ public class DaoInvestidos extends Dao<Investidos> {
         return "idConta";
     }
 
-    @Override
-    public int nAtributos() {
-        return 4;
-    }
 }

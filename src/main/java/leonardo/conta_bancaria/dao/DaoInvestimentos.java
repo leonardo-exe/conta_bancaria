@@ -1,7 +1,9 @@
 package leonardo.conta_bancaria.dao;
 
 import leonardo.conta_bancaria.model.Investimentos;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class DaoInvestimentos extends Dao<Investimentos> {
     @Override
     public Class<Investimentos> getEntity() {
@@ -13,8 +15,4 @@ public class DaoInvestimentos extends Dao<Investimentos> {
         return "tipoInvestimento";
     }
 
-    @Override
-    public int nAtributos() {
-        return 3;
-    }
 }

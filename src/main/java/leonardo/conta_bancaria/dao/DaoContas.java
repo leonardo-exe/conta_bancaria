@@ -1,7 +1,9 @@
 package leonardo.conta_bancaria.dao;
 
 import leonardo.conta_bancaria.model.Contas;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class DaoContas extends Dao<Contas> {
     @Override
     public Class<Contas> getEntity() {
@@ -13,8 +15,5 @@ public class DaoContas extends Dao<Contas> {
         return "numeroConta";
     }
 
-    @Override
-    public int nAtributos() {
-        return 5;
-    }
+
 }

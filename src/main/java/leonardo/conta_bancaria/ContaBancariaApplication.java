@@ -9,12 +9,13 @@ import java.math.BigDecimal;
 
 @SpringBootApplication
 public class ContaBancariaApplication implements CommandLineRunner {
-	public static void main(String[] args) {
-		SpringApplication.run(ContaBancariaApplication.class, args);
-	}
-	@Override
-	@NullMarked
-	public void run(String... args) throws Exception {
+    public static void main(String[] args) {
+        SpringApplication.run(ContaBancariaApplication.class, args);
+    }
 
-	}
+    @Override
+    @NullMarked
+    public void run(String... args) throws Exception {
+
+    }
 }

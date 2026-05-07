@@ -1,7 +1,9 @@
 package leonardo.conta_bancaria.dao;
 
 import leonardo.conta_bancaria.model.Enderecos;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class DaoEnderecos extends Dao<Enderecos> {
     @Override
     public Class<Enderecos> getEntity() {
@@ -13,8 +15,4 @@ public class DaoEnderecos extends Dao<Enderecos> {
         return "id";
     }
 
-    @Override
-    public int nAtributos() {
-        return 4;
-    }
 }
