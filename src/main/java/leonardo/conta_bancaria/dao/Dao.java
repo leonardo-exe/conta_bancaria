@@ -6,13 +6,15 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Repository
 public abstract class Dao<t> {
     @Autowired
-    private JdbcTemplate jdbc;
+    protected JdbcTemplate jdbc;
     private String table = getEntity().getSimpleName();
 
     public abstract Class<t> getEntity();
@@ -41,79 +43,79 @@ public abstract class Dao<t> {
         return result;
     }
 
-    public void insert(t object) {
+    public void insert(t object) throws Exception {
         String sql = "insert into " + table + " (";
         String sqlAux = "values (";
         List<Object> values = new ArrayList<>();
-        try {
-            Field[] fields = object.getClass().getDeclaredFields();
-            int size = nAtributos();
-            for (int i = 0; i < size; i++) {
-                fields[i].setAccessible(true);
-                if (!fields[i].getName().equals("id")) {
-                    sql += to_snake_case(fields[i].getName());
-                    sqlAux += "?";
-                    values.add(fields[i].get(object));
-                    if (i != size - 1) {
-                        sql += ", ";
-                        sqlAux += ", ";
-                    }
+        Field[] fields = object.getClass().getDeclaredFields();
+        int size = nAtributos();
+        for (int i = 0; i < size; i++) {
+            fields[i].setAccessible(true);
+            if (!fields[i].getName().equals("id")) {
+                sql += to_snake_case(fields[i].getName());
+                sqlAux += "?";
+                values.add(fields[i].get(object));
+                if (i != size - 1) {
+                    sql += ", ";
+                    sqlAux += ", ";
                 }
+            }
+            fields[i].setAccessible(false);
+        }
+        sql += ") ";
+        sqlAux += ")";
+        sql += sqlAux;
+        jdbc.update(sql, values.toArray());
+    }
+
+    public void update(t object) throws Exception {
+        String sql = "update " + table + " set ";
+        Field[] fields = object.getClass().getDeclaredFields();
+        List<Object> values = new ArrayList<Object>();
+        int size = nAtributos();
+        for (int i = 0; i < size; i++) {
+            if (!fields[i].getName().equals("id")) {
+                fields[i].setAccessible(true);
+                values.add(fields[i].get(object));
+                sql += to_snake_case(fields[i].getName()) + " = ?";
+                if (i != size - 1)
+                    sql += ", ";
                 fields[i].setAccessible(false);
             }
-            sql += ") ";
-            sqlAux += ")";
-            sql += sqlAux;
-            jdbc.update(sql, values.toArray());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
         }
+        values.add(object.getClass().getDeclaredField(atributoSelect()).get(object));
+        sql += "where " + atributoSelect() + " = ?";
+        jdbc.update(sql, values.toArray());
     }
 
-    public void update(t object) {
-        String sql = "update " + table + " set ";
-        try {
-            Field[] fields = object.getClass().getDeclaredFields();
-            List<Object> values = new ArrayList<Object>();
-            int size = nAtributos();
-            for (int i = 0; i < size; i++) {
-                if (!fields[i].getName().equals("id")) {
-                    fields[i].setAccessible(true);
-                    values.add(fields[i].get(object));
-                    sql += to_snake_case(fields[i].getName()) + " = ?";
-                    if (i != size - 1)
-                        sql += ", ";
-                    fields[i].setAccessible(false);
-                }
-            }
-            values.add(object.getClass().getDeclaredField(atributoSelect()).get(object));
-            sql += "where " + atributoSelect() + " = ?";
-            jdbc.update(sql, values);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public void delete(t object) {
+    public void delete(t object) throws Exception {
         String sql = "delete from " + table + " where " + to_snake_case(atributoSelect()) + " = ?";
-        try {
-            Field field = object.getClass().getDeclaredField(atributoSelect());
-            field.setAccessible(true);
-            jdbc.update(sql, field.getInt(object));
-            field.setAccessible(false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        Field field = object.getClass().getDeclaredField(atributoSelect());
+        field.setAccessible(true);
+        jdbc.update(sql, field.getInt(object));
+        field.setAccessible(false);
+
     }
 
     public t select(Object value) {
-        String sql = "select * from " + table + " where " + to_snake_case(atributoSelect()) + " = ?";
-        return jdbc.queryForObject(sql, BeanPropertyRowMapper.newInstance(getEntity()), value);
+        try {
+            String sql = "select * from " + table + " where " + to_snake_case(atributoSelect()) + " = ?";
+            return jdbc.queryForObject(sql, BeanPropertyRowMapper.newInstance(getEntity()), value);
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
     public List<t> select(int value) {
-        String sql = "select * from " + table + " where " + to_snake_case(atributoSelect()) + " = ?";
-        return jdbc.query(sql, BeanPropertyRowMapper.newInstance(getEntity()), value);
+        try {
+            String sql = "select * from " + table + " where " + to_snake_case(atributoSelect()) + " = ?";
+            return jdbc.query(sql, BeanPropertyRowMapper.newInstance(getEntity()), value);
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
     public List<t> selectAll() {

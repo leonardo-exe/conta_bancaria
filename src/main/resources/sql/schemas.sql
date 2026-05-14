@@ -21,13 +21,13 @@ create table Logradouros (
     foreign key(id_bairro) references bairros(id)
 );
 create table CEP (
-    CEP varchar(8) primary key,
+    CEP varchar(9) primary key,
     id_logradouro int,
     foreign key(id_logradouro) references logradouros(id)
 );
 create table Enderecos (
     id serial primary key,
-    CEP varchar(8),
+    CEP varchar(9),
     numero int,
     complemento varchar(32),
     foreign key(CEP) references CEP(CEP)
