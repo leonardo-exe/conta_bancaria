@@ -108,16 +108,6 @@ public abstract class Dao<t> {
         }
     }
 
-    public List<t> select(int value) {
-        try {
-            String sql = "select * from " + table + " where " + to_snake_case(atributoSelect()) + " = ?";
-            return jdbc.query(sql, BeanPropertyRowMapper.newInstance(getEntity()), value);
-        }
-        catch (Exception e) {
-            return null;
-        }
-    }
-
     public List<t> selectAll() {
         String sql = "select * from " + table;
         return jdbc.query(sql, BeanPropertyRowMapper.newInstance(getEntity()));

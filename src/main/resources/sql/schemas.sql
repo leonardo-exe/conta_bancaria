@@ -20,17 +20,17 @@ create table Logradouros (
     id_bairro int,
     foreign key(id_bairro) references bairros(id)
 );
-create table CEP (
-    CEP varchar(9) primary key,
-    id_logradouro int,
-    foreign key(id_logradouro) references logradouros(id)
+create table Cep (
+    cep varchar(9) primary key
 );
 create table Enderecos (
     id serial primary key,
-    CEP varchar(9),
+    cep varchar(9),
     numero int,
     complemento varchar(32),
-    foreign key(CEP) references CEP(CEP)
+    id_logradouro int,
+    foreign key (id_logradouro) references Logradouros(id),
+    foreign key (cep) references Cep(cep)
 );
 create table Clientes (
     id serial primary key,
@@ -40,14 +40,14 @@ create table Clientes (
 );
 create table PF (
     id_cliente int primary key,
-    CPF varchar(11),
-    RG varchar(9),
+    cpf varchar(11),
+    rg varchar(9),
     nome varchar(64),
     foreign key(id_cliente) references clientes(id)
 );
 create table PJ (
     id_cliente int primary key,
-    CNPJ varchar(14),
+    cnpj varchar(14),
     razao varchar(64),
     foreign key(id_cliente) references clientes(id)
 );

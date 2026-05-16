@@ -9,7 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 public class Enderecos {
     int id;
-    String CEP;
+    String cep;
     int numero;
     String complemento;
+    int id_logradouro;
 }

@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class PF {
     int idCliente;
-    String CPF;
-    String RG;
+    String cpf;
+    String rg;
     String nome;
 }

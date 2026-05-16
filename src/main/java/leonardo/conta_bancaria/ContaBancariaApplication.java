@@ -19,13 +19,13 @@ public class ContaBancariaApplication implements CommandLineRunner {
     @Autowired
     private EnderecoService enderecoService;
     @Autowired
-    private DaoCidades daoCidades;
+    private DaoLogradouros daoLogradouros;
 
     @Override
     @NullMarked
     public void run(String... args) throws Exception {
-        File arquivo = new File("/home/leonardo/programas/java/trabalho1_BD/conta_bancaria/src/main/java/leonardo/conta_bancaria/cidades_brasil.txt");
-        enderecoService.insertCEP("85862259");
-
+        enderecoService.insertEndereco("85430000", "Rua Carvalho", 662, "centro");
+        enderecoService.insertEndereco("85430000", "Avenida Bossolan", 1000, "centro");
+        System.out.println(daoLogradouros.selectAll().getLast().getId());
     }
 }

@@ -9,6 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 public class PJ {
     int idCliente;
-    String CNPJ;
+    String cnpj;
     String razao;
 }
