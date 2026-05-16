@@ -29,12 +29,15 @@ public class EnderecoService {
 
     public EnderecoCompleto insertCep(String cep, String logradouro) {
         try {
+
             EnderecoCompleto endereco = new EnderecoCompleto();
             endereco.setLogradouro(logradouro);
             Cep CEP = daoCep.select(cep);
             Logradouros log = daoLogradouros.select(logradouro);
             if (log == null || CEP == null) {
                 endereco = buscarEndereco(cep);
+                if (CEP == null)
+                    daoCep.insert(new Cep(cep));
                 Estados estado = daoEstados.select(endereco.getEstado());
                 Cidades cidade = daoCidades.select(endereco.getLocalidade());
                 Bairros bairro = daoBairros.select(endereco.getBairro());
@@ -64,8 +67,6 @@ public class EnderecoService {
                 }
                 return endereco;
             }
-            if (CEP == null)
-                daoCep.insert(new Cep(cep));
             return endereco;
         } catch (Exception e) {
             System.out.println("Formato do cep invalido");
