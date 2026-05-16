@@ -23,20 +23,27 @@ public class AuthService {
             System.out.println("Sera criada uma conta para PJ ou PF? (F/J)");
             cliente.setTipoPessoa(in.nextLine().toUpperCase());
         } while (!cliente.getTipoPessoa().equals("F") && !cliente.getTipoPessoa().equals("J"));
-        PF pf;
-        PJ pj;
-        if (cliente.getTipoPessoa().equals("F"))
-            pf = criarPF();
-        else
-            pj = criarPJ();
+
         cliente.setIdEndereco(criarEndereco());
         try {
-            daoClientes.insert(cliente);
-
+            int id = daoClientes.insert(cliente);
+            if (cliente.getTipoPessoa().equals("F")) {
+                PF pf = criarPF();
+                pf.setIdCliente(id);
+                daoPF.insert(pf);
+            }
+            else {
+                PJ pj = criarPJ();
+                pj.setIdCliente(id);
+                daoPJ.insert(pj);
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
         }
+
+
+
     }
     private PF criarPF() {
         PF pf = new PF();

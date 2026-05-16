@@ -3,13 +3,17 @@ package leonardo.conta_bancaria.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.sql.Statement;
+import java.util.*;
 
 @Repository
 public abstract class Dao<t> {
@@ -43,7 +47,7 @@ public abstract class Dao<t> {
         return result;
     }
 
-    public void insert(t object) throws Exception {
+    public int insert(t object) throws Exception {
         String sql = "insert into " + table + " (";
         String sqlAux = "values (";
         List<Object> values = new ArrayList<>();
@@ -62,10 +66,24 @@ public abstract class Dao<t> {
             }
             fields[i].setAccessible(false);
         }
-        sql += ") ";
-        sqlAux += ")";
-        sql += sqlAux;
-        jdbc.update(sql, values.toArray());
+        sql += ") " + sqlAux + ")";
+        final String finalSql = sql;
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbc.update(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement(finalSql, Statement.RETURN_GENERATED_KEYS);
+                for (int idx = 0; idx < values.size(); idx++) {
+                    ps.setObject(idx + 1, values.get(idx));
+                }
+                return ps;
+            }
+        }, keyHolder);
+        if (keyHolder.getKeys() != null &&  !keyHolder.getKeys().isEmpty()) {
+            Map<String, Object> keys = keyHolder.getKeys();
+            return ((Integer)(keys.get("id"))).intValue();
+        }
+        return -1;
     }
 
     public void update(t object) throws Exception {

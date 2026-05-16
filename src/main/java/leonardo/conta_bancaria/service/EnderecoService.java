@@ -4,11 +4,13 @@ import leonardo.conta_bancaria.dao.*;
 import leonardo.conta_bancaria.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Scanner;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -34,10 +36,10 @@ public class EnderecoService {
             endereco.setLogradouro(logradouro);
             Cep CEP = daoCep.select(cep);
             Logradouros log = daoLogradouros.select(logradouro);
-            if (log == null || CEP == null) {
+            if (CEP == null)
+                daoCep.insert(new Cep(cep));
+            if (log == null) {
                 endereco = buscarEndereco(cep);
-                if (CEP == null)
-                    daoCep.insert(new Cep(cep));
                 Estados estado = daoEstados.select(endereco.getEstado());
                 Cidades cidade = daoCidades.select(endereco.getLocalidade());
                 Bairros bairro = daoBairros.select(endereco.getBairro());
@@ -51,20 +53,19 @@ public class EnderecoService {
                     cidade = daoCidades.select(endereco.getLocalidade());
                 }
                 if (bairro == null) {
-                    if (endereco.getBairro().equals(""))
+                    if (endereco.getBairro().isEmpty())
                         endereco.setBairro(endereco.getLocalidade());
-                    daoBairros.insert(new Bairros(-1, endereco.getBairro(), cidade.getId()));
+                    if (daoBairros.select(endereco.getLocalidade()) == null)
+                        daoBairros.insert(new Bairros(-1, endereco.getBairro(), cidade.getId()));
                     bairro = daoBairros.select(endereco.getBairro());
                 }
-                if (log == null) {
-                    log = daoLogradouros.select(endereco.getLogradouro());
-                    if (log == null) {
-                        daoLogradouros.insert(new Logradouros(-1, logradouro, bairro.getId()));
-                        endereco.setLogradouro(logradouro);
-                    }
-                    else
-                        daoLogradouros.insert(log);
-                }
+                log = daoLogradouros.select(endereco.getLogradouro());
+                if (log == null || log.getLogradouro().isEmpty()) {
+                    daoLogradouros.insert(new Logradouros(-1, logradouro, bairro.getId()));
+                    endereco.setLogradouro(logradouro);
+                } else
+                    daoLogradouros.insert(log);
+
                 return endereco;
             }
             return endereco;
@@ -96,10 +97,8 @@ public class EnderecoService {
             Integer id = daoEnderecos.queryId(endereco);
             if (id != null)
                 return id;
-            daoEnderecos.insert(endereco);
-            return daoEnderecos.queryId(endereco);
-        }
-        catch (Exception e) {
+            return daoEnderecos.insert(endereco);
+        } catch (Exception e) {
             e.printStackTrace();
             return -1;
         }
