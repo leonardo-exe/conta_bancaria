@@ -31,7 +31,6 @@ public class EnderecoService {
 
     public EnderecoCompleto insertCep(String cep, String logradouro) {
         try {
-
             EnderecoCompleto endereco = new EnderecoCompleto();
             endereco.setLogradouro(logradouro);
             Cep CEP = daoCep.select(cep);
@@ -43,6 +42,9 @@ public class EnderecoService {
                 Estados estado = daoEstados.select(endereco.getEstado());
                 Cidades cidade = daoCidades.select(endereco.getLocalidade());
                 Bairros bairro = daoBairros.select(endereco.getBairro());
+                if (bairro != null)
+                    if (bairro.getIdCidade() != cidade.getId())
+                        bairro = null;
                 if (estado == null) {
                     System.out.println("Digite a sigla do estado em que este CEP reside");
                     daoEstados.insert(new Estados(endereco.getEstado(), in.nextLine()));
@@ -61,15 +63,19 @@ public class EnderecoService {
                 }
                 log = daoLogradouros.select(endereco.getLogradouro());
                 if (log == null || log.getLogradouro().isEmpty()) {
-                    daoLogradouros.insert(new Logradouros(-1, logradouro, bairro.getId()));
-                    endereco.setLogradouro(logradouro);
-                } else
-                    daoLogradouros.insert(log);
-
+                    if (endereco.getLogradouro().isEmpty()) {
+                        daoLogradouros.insert(new Logradouros(-1, logradouro, bairro.getId()));
+                        endereco.setLogradouro(logradouro);
+                    }
+                    else {
+                        daoLogradouros.insert(new Logradouros(-1, endereco.getLogradouro(), bairro.getId()));
+                    }
+                }
                 return endereco;
             }
             return endereco;
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Formato do cep invalido");
             return null;
         }

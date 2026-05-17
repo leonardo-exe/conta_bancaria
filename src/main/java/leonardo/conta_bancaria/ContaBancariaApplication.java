@@ -24,6 +24,6 @@ public class ContaBancariaApplication implements CommandLineRunner {
     @Override
     @NullMarked
     public void run(String... args) throws Exception {
-        System.out.println(enderecoService.insertEndereco("20040901", "centro", 2, "rio"));
+        System.out.println(enderecoService.insertEndereco("85864172", "", 30, "Alameda"));
     }
 }

@@ -81,7 +81,11 @@ public abstract class Dao<t> {
         }, keyHolder);
         if (keyHolder.getKeys() != null &&  !keyHolder.getKeys().isEmpty()) {
             Map<String, Object> keys = keyHolder.getKeys();
-            return ((Integer)(keys.get("id"))).intValue();
+            Integer id = (Integer)keys.get("id");
+            if (id != null)
+                return id.intValue();
+            else
+                return 0;
         }
         return -1;
     }
