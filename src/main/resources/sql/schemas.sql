@@ -58,9 +58,9 @@ create table Emails (
 );
 create table Telefones (
     numero varchar(9),
-    DDD varchar(3),
+    ddd varchar(3),
     id_cliente int,
-    primary key(numero, DDD),
+    primary key(numero, ddd),
     foreign key(id_cliente) references clientes(id)
 );
 create table Bancos (

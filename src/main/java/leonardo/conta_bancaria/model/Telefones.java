@@ -9,6 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 public class Telefones {
     String numero;
-    String DDD;
+    String ddd;
     int idCliente;
 }

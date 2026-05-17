@@ -1,12 +1,9 @@
 package leonardo.conta_bancaria.dao;
 
 import leonardo.conta_bancaria.model.Bairros;
-import leonardo.conta_bancaria.model.Cidades;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 @Repository
 public class DaoBairros extends Dao<Bairros> {
@@ -20,15 +17,13 @@ public class DaoBairros extends Dao<Bairros> {
         return "bairro";
     }
 
-    public String toString(int cidade) {
-        List<Bairros> list = selectAll();
-        List<String> result =  new ArrayList<>();
-        for (Bairros bairro : list) {
-            if (bairro.getIdCidade() == cidade)
-                result.add(bairro.getBairro());
+    public Bairros selectPorNomeECidade(String nomeBairro, int idCidade) {
+        try {
+            String sql = "select * from bairros where bairro = ? and id_cidade = ?";
+            return jdbc.queryForObject(sql, BeanPropertyRowMapper.newInstance(Bairros.class), nomeBairro, idCidade);
+        } catch (Exception e) {
+            return null;
         }
-        result.sort(Comparator.naturalOrder());
-        return String.join("\n", result);
     }
 
 }

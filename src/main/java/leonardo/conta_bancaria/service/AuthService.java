@@ -4,11 +4,12 @@ import leonardo.conta_bancaria.model.*;
 import leonardo.conta_bancaria.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.Scanner;
 
 @Service
 public class AuthService {
-    private Scanner in =  new Scanner(System.in);
+    private Scanner in = new Scanner(System.in);
     @Autowired
     private EnderecoService enderecoService;
     @Autowired
@@ -17,34 +18,70 @@ public class AuthService {
     private DaoPF daoPF;
     @Autowired
     private DaoPJ daoPJ;
-    public void cadastro() {
+    @Autowired
+    private DaoEmails daoEmails;
+    @Autowired
+    private DaoTelefones daoTelefones;
+    @Autowired
+    private ContaService contaService;
+
+    public int cadastro() {
         Clientes cliente = new Clientes();
         do {
             System.out.println("Sera criada uma conta para PJ ou PF? (F/J)");
             cliente.setTipoPessoa(in.nextLine().toUpperCase());
         } while (!cliente.getTipoPessoa().equals("F") && !cliente.getTipoPessoa().equals("J"));
-
-        cliente.setIdEndereco(criarEndereco());
         try {
+            PF pf = new PF();
+            PJ pj = new PJ();
+            if (cliente.getTipoPessoa().equals("F"))
+                pf = criarPF();
+            else
+                pj = criarPJ();
+            cliente.setIdEndereco(criarEndereco());
             int id = daoClientes.insert(cliente);
             if (cliente.getTipoPessoa().equals("F")) {
-                PF pf = criarPF();
                 pf.setIdCliente(id);
                 daoPF.insert(pf);
-            }
-            else {
-                PJ pj = criarPJ();
+            } else {
                 pj.setIdCliente(id);
                 daoPJ.insert(pj);
             }
-        }
-        catch (Exception e) {
+            Emails email = criarEmail();
+            email.setIdCliente(id);
+            daoEmails.insert(email);
+            Telefones telefones = criarTelefone();
+            telefones.setIdCliente(id);
+            daoTelefones.insert(telefones);
+            contaService.novaConta(id);
+            return id;
+        } catch (Exception e) {
             e.printStackTrace();
+            return -1;
         }
-
-
-
     }
+
+    private Telefones criarTelefone() {
+        System.out.println("Digite o numero de telefone com DDD no seguinte formato: (### #########)");
+        boolean confirmado = false;
+        Telefones telefone = new Telefones();
+        while (!confirmado) {
+            String numero = in.nextLine().replace(" ", "");
+            telefone.setDdd(numero.substring(0, 3));
+            telefone.setNumero(numero.substring(3));
+            System.out.println("Confirmar numero " + telefone.getDdd() + " " + telefone.getNumero() + "? (S/N)");
+            String resposta = in.nextLine().toUpperCase();
+            if (resposta.equals("S"))
+                confirmado = true;
+        }
+        return telefone;
+    }
+
+    private Emails criarEmail() {
+        System.out.println("Digite seu email:");
+        return new Emails(in.nextLine(), -1);
+    }
+
     private PF criarPF() {
         PF pf = new PF();
         System.out.println("Digite o seu nome completo:");
@@ -55,6 +92,7 @@ public class AuthService {
         pf.setRg(in.nextLine());
         return pf;
     }
+
     private PJ criarPJ() {
         PJ pj = new PJ();
         System.out.println("Digite a razao social da empresa:");
@@ -63,6 +101,7 @@ public class AuthService {
         pj.setCnpj(in.nextLine());
         return pj;
     }
+
     private int criarEndereco() {
         String cep, logradouro, complemento;
         int numero, id;

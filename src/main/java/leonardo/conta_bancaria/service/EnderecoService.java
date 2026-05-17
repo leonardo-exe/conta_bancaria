@@ -29,51 +29,41 @@ public class EnderecoService {
     private DaoEnderecos daoEnderecos;
     private Scanner in = new Scanner(System.in);
 
-    public EnderecoCompleto insertCep(String cep, String logradouro) {
+    public Integer insertCep(String cep, String logradouro) {
         try {
-            EnderecoCompleto endereco = new EnderecoCompleto();
-            endereco.setLogradouro(logradouro);
             Cep CEP = daoCep.select(cep);
-            Logradouros log = daoLogradouros.select(logradouro);
-            if (CEP == null)
+            if (CEP == null) {
                 daoCep.insert(new Cep(cep));
-            if (log == null) {
-                endereco = buscarEndereco(cep);
-                Estados estado = daoEstados.select(endereco.getEstado());
-                Cidades cidade = daoCidades.select(endereco.getLocalidade());
-                Bairros bairro = daoBairros.select(endereco.getBairro());
-                if (bairro != null)
-                    if (bairro.getIdCidade() != cidade.getId())
-                        bairro = null;
-                if (estado == null) {
-                    System.out.println("Digite a sigla do estado em que este CEP reside");
-                    daoEstados.insert(new Estados(endereco.getEstado(), in.nextLine()));
-                    estado = daoEstados.select(endereco.getEstado());
-                }
-                if (cidade == null) {
-                    daoCidades.insert(new Cidades(-1, endereco.getLocalidade(), estado.getSigla()));
-                    cidade = daoCidades.select(endereco.getLocalidade());
-                }
-                if (bairro == null) {
-                    if (endereco.getBairro().isEmpty())
-                        endereco.setBairro(endereco.getLocalidade());
-                    if (daoBairros.select(endereco.getLocalidade()) == null)
-                        daoBairros.insert(new Bairros(-1, endereco.getBairro(), cidade.getId()));
-                    bairro = daoBairros.select(endereco.getBairro());
-                }
-                log = daoLogradouros.select(endereco.getLogradouro());
-                if (log == null || log.getLogradouro().isEmpty()) {
-                    if (endereco.getLogradouro().isEmpty()) {
-                        daoLogradouros.insert(new Logradouros(-1, logradouro, bairro.getId()));
-                        endereco.setLogradouro(logradouro);
-                    }
-                    else {
-                        daoLogradouros.insert(new Logradouros(-1, endereco.getLogradouro(), bairro.getId()));
-                    }
-                }
-                return endereco;
             }
-            return endereco;
+            EnderecoCompleto endereco = buscarEndereco(cep);
+            Estados estado = daoEstados.select(endereco.getEstado());
+            if (estado == null) {
+                System.out.println("Digite a sigla do estado em que este CEP reside");
+                daoEstados.insert(new Estados(endereco.getEstado(), in.nextLine()));
+                estado = daoEstados.select(endereco.getEstado());
+            }
+            Cidades cidade = daoCidades.select(endereco.getLocalidade());
+            if (cidade == null) {
+                daoCidades.insert(new Cidades(-1, endereco.getLocalidade(), estado.getSigla()));
+                cidade = daoCidades.select(endereco.getLocalidade());
+            }
+            if (endereco.getBairro() == null || endereco.getBairro().isEmpty()) {
+                endereco.setBairro(cidade.getCidade());
+            }
+            Bairros bairro = daoBairros.selectPorNomeECidade(endereco.getBairro(), cidade.getId());
+            if (bairro == null) {
+                daoBairros.insert(new Bairros(-1, endereco.getBairro(), cidade.getId()));
+                bairro = daoBairros.selectPorNomeECidade(endereco.getBairro(), cidade.getId());
+            }
+            String nomeLogradouroFinal = (endereco.getLogradouro() == null || endereco.getLogradouro().isEmpty())
+                    ? logradouro
+                    : endereco.getLogradouro();
+            Logradouros log = daoLogradouros.selectPorNomeEBairro(nomeLogradouroFinal, bairro.getId());
+            if (log == null) {
+                return daoLogradouros.insert(new Logradouros(-1, nomeLogradouroFinal, bairro.getId()));
+            }
+            return log.getId();
+
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Formato do cep invalido");
@@ -95,11 +85,10 @@ public class EnderecoService {
 
     public int insertEndereco(String cep, String logradouro, int numero, String complemento) {
         try {
-            EnderecoCompleto end = insertCep(cep, logradouro);
-            if (end == null)
+            Integer idl = insertCep(cep, logradouro);
+            if (idl == null)
                 return -1;
-            logradouro = end.getLogradouro();
-            Enderecos endereco = new Enderecos(-1, cep, numero, complemento, daoLogradouros.select(logradouro).getId());
+            Enderecos endereco = new Enderecos(-1, cep, numero, complemento, idl);
             Integer id = daoEnderecos.queryId(endereco);
             if (id != null)
                 return id;

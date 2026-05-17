@@ -2,6 +2,7 @@ package leonardo.conta_bancaria;
 
 import leonardo.conta_bancaria.dao.*;
 import leonardo.conta_bancaria.model.*;
+import leonardo.conta_bancaria.service.AuthService;
 import leonardo.conta_bancaria.service.EnderecoService;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,11 @@ public class ContaBancariaApplication implements CommandLineRunner {
     }
 
     @Autowired
-    private EnderecoService enderecoService;
-    @Autowired
-    private DaoLogradouros daoLogradouros;
+    private AuthService authService;
 
     @Override
     @NullMarked
     public void run(String... args) throws Exception {
-        System.out.println(enderecoService.insertEndereco("85864172", "", 30, "Alameda"));
+
     }
 }
