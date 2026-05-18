@@ -1,6 +1,7 @@
 package leonardo.conta_bancaria.service;
 
 import leonardo.conta_bancaria.dao.*;
+import leonardo.conta_bancaria.dto.EnderecoCompletoDTO;
 import leonardo.conta_bancaria.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,8 @@ public class EnderecoService {
     private DaoCep daoCep;
     @Autowired
     private DaoEnderecos daoEnderecos;
-    private Scanner in = new Scanner(System.in);
+    @Autowired
+    private Scanner in;
 
     public Integer insertCep(String cep, String logradouro) {
         try {
@@ -35,7 +37,7 @@ public class EnderecoService {
             if (CEP == null) {
                 daoCep.insert(new Cep(cep));
             }
-            EnderecoCompleto endereco = buscarEndereco(cep);
+            EnderecoCompletoDTO endereco = buscarEndereco(cep);
             Estados estado = daoEstados.select(endereco.getEstado());
             if (estado == null) {
                 System.out.println("Digite a sigla do estado em que este CEP reside");
@@ -71,7 +73,7 @@ public class EnderecoService {
         }
     }
 
-    private EnderecoCompleto buscarEndereco(String cep) throws Exception {
+    private EnderecoCompletoDTO buscarEndereco(String cep) throws Exception {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create("https://viacep.com.br/ws/" + cep + "/json/"))
                 .GET()
@@ -80,7 +82,7 @@ public class EnderecoService {
                 .send(request, HttpResponse.BodyHandlers.ofString());
         String json = response.body();
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, EnderecoCompleto.class);
+        return mapper.readValue(json, EnderecoCompletoDTO.class);
     }
 
     public int insertEndereco(String cep, String logradouro, int numero, String complemento) {

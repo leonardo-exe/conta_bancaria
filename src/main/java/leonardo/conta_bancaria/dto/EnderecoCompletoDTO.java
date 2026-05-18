@@ -1,4 +1,4 @@
-package leonardo.conta_bancaria.model;
+package leonardo.conta_bancaria.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EnderecoCompleto {
+public class EnderecoCompletoDTO {
     String cep;
     String logradouro;
     String bairro;

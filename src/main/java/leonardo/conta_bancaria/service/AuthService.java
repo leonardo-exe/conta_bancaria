@@ -1,5 +1,6 @@
 package leonardo.conta_bancaria.service;
 
+import leonardo.conta_bancaria.dto.BancosDTO;
 import leonardo.conta_bancaria.model.*;
 import leonardo.conta_bancaria.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,8 @@ import java.util.Scanner;
 
 @Service
 public class AuthService {
-    private Scanner in = new Scanner(System.in);
+    @Autowired
+    private Scanner in;
     @Autowired
     private EnderecoService enderecoService;
     @Autowired
@@ -24,8 +26,12 @@ public class AuthService {
     private DaoTelefones daoTelefones;
     @Autowired
     private ContaService contaService;
+    @Autowired
+    private DaoBancos daoBancos;
+    @Autowired
+    private DaoAgencias daoAgencias;
 
-    public int cadastro() {
+    public int cadastro(char t) {
         Clientes cliente = new Clientes();
         do {
             System.out.println("Sera criada uma conta para PJ ou PF? (F/J)");
@@ -53,11 +59,38 @@ public class AuthService {
             Telefones telefones = criarTelefone();
             telefones.setIdCliente(id);
             daoTelefones.insert(telefones);
-            contaService.novaConta(id);
+            if (t != 'b') {
+                System.out.println("Selecione o banco em que a conta vai ser aberta:");
+                for (BancosDTO i : daoBancos.view())
+                    System.out.println(i.getId() + " " + i.getRazao());
+                int i;
+                boolean valido = false;
+                do {
+                    i = in.nextInt();
+                    if (daoBancos.select(i) == null)
+                        System.out.println("Digite um numero valido");
+                    else
+                        valido = true;
+                } while (valido);
+            }
             return id;
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
+        }
+    }
+
+    public void cadastrarBanco() {
+        try {
+            Bancos banco = new Bancos();
+            banco.setId(cadastro('b'));
+            daoBancos.insert(banco);
+            Clientes cliente = daoClientes.select(banco.getId());
+            Agencias agencia =  new Agencias(-1, contaService.gerarNum(1), cliente.getIdEndereco(), banco.getId());
+            daoAgencias.insert(agencia);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -113,6 +146,7 @@ public class AuthService {
             logradouro = in.nextLine();
             System.out.println("Digite o numero predial:");
             numero = in.nextInt();
+            in.nextLine();
             System.out.println("Digite o complemento:");
             complemento = in.nextLine();
             id = enderecoService.insertEndereco(cep, logradouro, numero, complemento);
