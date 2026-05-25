@@ -1,7 +1,8 @@
 package leonardo.conta_bancaria.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import leonardo.conta_bancaria.dao.*;
-import leonardo.conta_bancaria.dto.*;
+import leonardo.conta_bancaria.dto.EnderecoCompletoDTO;
 import leonardo.conta_bancaria.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,9 +10,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.List;
 import java.util.Scanner;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class EnderecoService {
@@ -27,8 +26,7 @@ public class EnderecoService {
     private DaoCep daoCep;
     @Autowired
     private DaoEnderecos daoEnderecos;
-    @Autowired
-    private Scanner in;
+    private Scanner in = new Scanner(System.in);
 
     public Integer insertCep(String cep, String logradouro) {
         try {

@@ -1,2 +1,25 @@
-delete from PF where id_cliente = 4;
-delete from clientes where id = 4;
+insert into Transacoes (tipo_transacao) values
+('Pix'),
+('TED'),
+('TEF'),
+('Boleto Bancário'),
+('Cartão de Crédito'),
+('Cartão de Débito'),
+('Ordem de Pagamento');
+insert into Investimentos (tipo_investimento, rendimento) values
+('Poupança', '0,50% + TR'),
+('CDB - Certificado de Depósito Bancário', '0,80% a 1,10%'),
+('Tesouro Selic', '0,85%'),
+('LCI - Letra de Crédito Imobiliário', '0,75% a 0,95%'),
+('LCA - Letra de Crédito do Agronegócio', '0,75% a 0,95%'),
+('Fundos DI', '0,80% a 1,00%'),
+('Debêntures', '0,90% a 1,30%'),
+('CRI - Certificado de Recebíveis Imobiliários', '0,85% a 1,20%'),
+('CRA - Certificado de Recebíveis do Agronegócio', '0,85% a 1,20%'),
+('Letra de Câmbio', '0,85% a 1,10%'),
+('Previdência Privada (Renda Fixa)', '0,70% a 0,90%'),
+('Ações', 'Variável'),
+('FII - Fundos de Investimento Imobiliário', '0,60% a 1,10% de Dividendos'),
+('ETF - Exchange Traded Funds', 'Variável'),
+('BDR - Brazilian Depositary Receipts', 'Variável'),
+('Criptoativos', 'Variável');

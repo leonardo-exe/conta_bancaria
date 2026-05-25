@@ -4,7 +4,6 @@ import leonardo.conta_bancaria.dao.*;
 import leonardo.conta_bancaria.dto.*;
 import leonardo.conta_bancaria.model.*;
 import leonardo.conta_bancaria.service.*;
-import leonardo.conta_bancaria.util.Util;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -19,19 +18,11 @@ public class ContaBancariaApplication implements CommandLineRunner {
     }
 
     @Autowired
-    private ContaService contaService;
-    @Autowired
-    private AuthService authService;
-    @Autowired
-    private AgenciaService agenciaService;
-    @Autowired
-    private Views view;
-    @Autowired
-    private Util util;
+    private MovimentacoesService movimentacoesService;
 
     @Override
     @NullMarked
     public void run(String... args) throws Exception {
-        System.out.println("10431743975".substring(0,11));
+       movimentacoesService.transacao(1);
     }
 }

@@ -11,8 +11,7 @@ import java.util.Scanner;
 
 @Service
 public class AgenciaService {
-    @Autowired
-    private Scanner in;
+    private Scanner in =  new Scanner(System.in);
     @Autowired
     private AuthService authService;
     @Autowired

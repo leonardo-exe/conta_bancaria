@@ -12,7 +12,7 @@ public class DaoTransacoes extends Dao<Transacoes> {
 
     @Override
     public String atributoSelect() {
-        return "tipoTransacao";
+        return "id";
     }
 
 }

@@ -12,7 +12,7 @@ public class DaoInvestimentos extends Dao<Investimentos> {
 
     @Override
     public String atributoSelect() {
-        return "tipoInvestimento";
+        return "id";
     }
 
 }

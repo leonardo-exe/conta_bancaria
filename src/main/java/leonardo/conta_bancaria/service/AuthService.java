@@ -4,6 +4,7 @@ import leonardo.conta_bancaria.dto.ViewBancos;
 import leonardo.conta_bancaria.model.*;
 import leonardo.conta_bancaria.dao.*;
 import leonardo.conta_bancaria.util.Util;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,8 +12,7 @@ import java.util.Scanner;
 
 @Service
 public class AuthService {
-    @Autowired
-    private Scanner in;
+    private Scanner in =  new Scanner(System.in);
     @Autowired
     private EnderecoService enderecoService;
     @Autowired

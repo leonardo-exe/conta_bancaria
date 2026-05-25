@@ -16,8 +16,7 @@ public class ContaService {
     private DaoAgencias daoAgencias;
     @Autowired
     private Views view;
-    @Autowired
-    private Scanner in;
+    private Scanner in =  new Scanner(System.in);
     @Autowired
     private Util util;
 

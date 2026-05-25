@@ -90,8 +90,8 @@ create table Transacoes (
 );
 create table Investimentos (
     id serial primary key,
-    tipo_investimento varchar(32),
-    rendimento decimal
+    tipo_investimento varchar(64),
+    rendimento varchar(32)
 );
 create table Movimentacoes (
     id_conta1 int,

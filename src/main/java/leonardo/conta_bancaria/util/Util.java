@@ -7,13 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 public class Util {
-    @Autowired
-    private Random random;
+    private Random random = new Random();
     @Autowired
     private Views view;
 
@@ -36,7 +38,11 @@ public class Util {
 
     public void mostrarAgencias(int banco, String cidade) {
         List<EnderecoAgencias> list = view.selectEnderecoAgencia(banco);
-        list.stream().filter(x -> x.getCidade().equals(cidade)).forEach(System.out::println);
+        List<EnderecoAgencias> listFilter = list.stream().filter(i -> i.getCidade().equals(cidade)).collect(Collectors.toList());
+        if (listFilter.isEmpty())
+            list.forEach(System.out::println);
+        else
+            listFilter.forEach(System.out::println);
     }
 
     public String data() {

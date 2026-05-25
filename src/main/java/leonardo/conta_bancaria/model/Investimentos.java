@@ -4,7 +4,6 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
-@ToString
 @NoArgsConstructor
 @Getter
 @Setter
@@ -12,5 +11,10 @@ import java.math.BigDecimal;
 public class Investimentos {
     int id;
     String tipoInvestimento;
-    BigDecimal rendimento;
+    String rendimento;
+
+    @Override
+    public String toString() {
+        return id + " - " + tipoInvestimento + "\nRendimento mensal: " + rendimento;
+    }
 }
