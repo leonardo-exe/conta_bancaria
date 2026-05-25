@@ -12,6 +12,6 @@ public class DaoPJ extends Dao<PJ> {
 
     @Override
     public String atributoSelect() {
-        return "CNPJ";
+        return "cnpj";
     }
 }

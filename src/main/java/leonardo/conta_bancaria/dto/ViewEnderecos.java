@@ -5,11 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BancosDTO {
+public class ViewEnderecos {
     int id;
-    String razao;
+    int numero;
+    String logradouro;
+    String bairro;
+    String cidade;
+    String sigla;
 }

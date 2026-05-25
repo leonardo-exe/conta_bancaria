@@ -1,41 +1,49 @@
 package leonardo.conta_bancaria.service;
 
-import leonardo.conta_bancaria.dao.DaoAgencias;
-import leonardo.conta_bancaria.dao.DaoContas;
-import leonardo.conta_bancaria.model.Agencias;
-import leonardo.conta_bancaria.model.Contas;
+import leonardo.conta_bancaria.dao.*;
+import leonardo.conta_bancaria.dto.*;
+import leonardo.conta_bancaria.model.*;
+import leonardo.conta_bancaria.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Random;
+import java.util.Scanner;
 
 @Service
 public class ContaService {
     @Autowired
-    private Random random;
-    @Autowired
     private DaoContas daoContas;
     @Autowired
     private DaoAgencias daoAgencias;
-    public void novaConta(int cliente, int banco) {
-        //Contas conta = new Contas(-1, gerarNum(4), cliente, 1, );
-    }
+    @Autowired
+    private Views view;
+    @Autowired
+    private Scanner in;
+    @Autowired
+    private Util util;
 
-    public String gerarNum(int n) {
-        String result = "";
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < 4; j++) {
-                result += ((Integer)random.nextInt(10)).toString();
-            }
-            result += " ";
+    public void novaConta(Clientes cliente, int banco) {
+        try {
+            ViewEnderecos endereco = view.selectEnderecoById(cliente.getIdEndereco());
+            System.out.println("Selecione a agencia mais proxima de sua residencia:");
+            util.mostrarAgencias(banco, endereco.getCidade());
+            String linha;
+            Agencias agencia;
+            boolean valido = false;
+            do {
+                linha = in.nextLine();
+                agencia = daoAgencias.select(linha);
+                if (agencia == null)
+                    System.out.println("Digite uma agencia valida:");
+                else
+                    valido = true;
+            } while (!valido);
+            Contas conta = new Contas(-1, util.gerarNum(4), cliente.getId(), agencia.getId(), util.data());
+            daoContas.insert(conta);
         }
-        return result;
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private String dataAbertura() {
-        LocalDate dataAbertura = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
-        return dataAbertura.format(formatter);
-    }
+
 }

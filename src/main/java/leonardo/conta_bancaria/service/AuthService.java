@@ -1,8 +1,9 @@
 package leonardo.conta_bancaria.service;
 
-import leonardo.conta_bancaria.dto.BancosDTO;
+import leonardo.conta_bancaria.dto.ViewBancos;
 import leonardo.conta_bancaria.model.*;
 import leonardo.conta_bancaria.dao.*;
+import leonardo.conta_bancaria.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +26,13 @@ public class AuthService {
     @Autowired
     private DaoTelefones daoTelefones;
     @Autowired
-    private ContaService contaService;
-    @Autowired
     private DaoBancos daoBancos;
     @Autowired
-    private DaoAgencias daoAgencias;
+    private Util util;
+    @Autowired
+    private ContaService contaService;
 
-    public int cadastro(char t) {
+    public Clientes cadastro(char t) {
         Clientes cliente = new Clientes();
         do {
             System.out.println("Sera criada uma conta para PJ ou PF? (F/J)");
@@ -46,51 +47,44 @@ public class AuthService {
                 pj = criarPJ();
             cliente.setIdEndereco(criarEndereco());
             int id = daoClientes.insert(cliente);
+            cliente.setId(id);
             if (cliente.getTipoPessoa().equals("F")) {
                 pf.setIdCliente(id);
-                daoPF.insert(pf);
+                if (daoPF.select(pf.getCpf()) == null)
+                    daoPF.insert(pf);
             } else {
                 pj.setIdCliente(id);
-                daoPJ.insert(pj);
+                if  (daoPJ.select(pj.getCnpj()) == null)
+                    daoPJ.insert(pj);
             }
             Emails email = criarEmail();
             email.setIdCliente(id);
-            daoEmails.insert(email);
+            if (daoEmails.select(email.getEmail()) == null)
+                daoEmails.insert(email);
             Telefones telefones = criarTelefone();
             telefones.setIdCliente(id);
-            daoTelefones.insert(telefones);
+            Telefones aux = daoTelefones.select(telefones.getNumero());
+            if (aux == null || !aux.getDdd().equals(telefones.getDdd()))
+                daoTelefones.insert(telefones);
             if (t != 'b') {
                 System.out.println("Selecione o banco em que a conta vai ser aberta:");
-                for (BancosDTO i : daoBancos.view())
-                    System.out.println(i.getId() + " " + i.getRazao());
+                util.mostrarBancos();
                 int i;
                 boolean valido = false;
                 do {
                     i = in.nextInt();
+                    in.nextLine();
                     if (daoBancos.select(i) == null)
                         System.out.println("Digite um numero valido");
                     else
                         valido = true;
-                } while (valido);
+                } while (!valido);
+                contaService.novaConta(cliente, i);
             }
-            return id;
+            return cliente;
         } catch (Exception e) {
             e.printStackTrace();
-            return -1;
-        }
-    }
-
-    public void cadastrarBanco() {
-        try {
-            Bancos banco = new Bancos();
-            banco.setId(cadastro('b'));
-            daoBancos.insert(banco);
-            Clientes cliente = daoClientes.select(banco.getId());
-            Agencias agencia =  new Agencias(-1, contaService.gerarNum(1), cliente.getIdEndereco(), banco.getId());
-            daoAgencias.insert(agencia);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+            return null;
         }
     }
 
@@ -101,7 +95,7 @@ public class AuthService {
         while (!confirmado) {
             String numero = in.nextLine().replace(" ", "");
             telefone.setDdd(numero.substring(0, 3));
-            telefone.setNumero(numero.substring(3));
+            telefone.setNumero(numero.substring(3, 12));
             System.out.println("Confirmar numero " + telefone.getDdd() + " " + telefone.getNumero() + "? (S/N)");
             String resposta = in.nextLine().toUpperCase();
             if (resposta.equals("S"))
@@ -119,10 +113,10 @@ public class AuthService {
         PF pf = new PF();
         System.out.println("Digite o seu nome completo:");
         pf.setNome(in.nextLine());
-        System.out.println("Digite o seu CPF:");
-        pf.setCpf(in.nextLine());
-        System.out.println("Digite o seu RG:");
-        pf.setRg(in.nextLine());
+        System.out.println("Digite o seu CPF: (apenas numeros)");
+        pf.setCpf(in.nextLine().substring(0, 11));
+        System.out.println("Digite o seu RG: (apenas numeros)");
+        pf.setRg(in.nextLine().substring(0, 9));
         return pf;
     }
 
@@ -130,12 +124,12 @@ public class AuthService {
         PJ pj = new PJ();
         System.out.println("Digite a razao social da empresa:");
         pj.setRazao(in.nextLine());
-        System.out.println("Digite o CNPJ da empresa:");
-        pj.setCnpj(in.nextLine());
+        System.out.println("Digite o CNPJ da empresa: (apenas numeros)");
+        pj.setCnpj(in.nextLine().substring(0, 14));
         return pj;
     }
 
-    private int criarEndereco() {
+    public int criarEndereco() {
         String cep, logradouro, complemento;
         int numero, id;
         do {

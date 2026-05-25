@@ -1,17 +1,16 @@
 package leonardo.conta_bancaria.service;
 
 import leonardo.conta_bancaria.dao.*;
-import leonardo.conta_bancaria.dto.EnderecoCompletoDTO;
+import leonardo.conta_bancaria.dto.*;
 import leonardo.conta_bancaria.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.Scanner;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -41,7 +40,7 @@ public class EnderecoService {
             Estados estado = daoEstados.select(endereco.getEstado());
             if (estado == null) {
                 System.out.println("Digite a sigla do estado em que este CEP reside");
-                daoEstados.insert(new Estados(endereco.getEstado(), in.nextLine()));
+                daoEstados.insert(new Estados(endereco.getEstado(), in.nextLine().substring(0, 2)));
                 estado = daoEstados.select(endereco.getEstado());
             }
             Cidades cidade = daoCidades.select(endereco.getLocalidade());

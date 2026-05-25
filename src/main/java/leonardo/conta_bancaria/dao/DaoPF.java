@@ -12,7 +12,7 @@ public class DaoPF extends Dao<PF> {
 
     @Override
     public String atributoSelect() {
-        return "CPF";
+        return "cpf";
     }
 
 }
