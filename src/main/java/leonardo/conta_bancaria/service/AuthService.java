@@ -34,10 +34,14 @@ public class AuthService {
 
     public Clientes cadastro(char t) {
         Clientes cliente = new Clientes();
-        do {
-            System.out.println("Sera criada uma conta para PJ ou PF? (F/J)");
-            cliente.setTipoPessoa(in.nextLine().toUpperCase());
-        } while (!cliente.getTipoPessoa().equals("F") && !cliente.getTipoPessoa().equals("J"));
+        if (t != 'b') {
+            do {
+                System.out.println("Sera criada uma conta para PJ ou PF? (F/J)");
+                cliente.setTipoPessoa(in.nextLine().toUpperCase());
+            } while (!cliente.getTipoPessoa().equals("F") && !cliente.getTipoPessoa().equals("J"));
+        }
+        else
+            cliente.setTipoPessoa("J");
         try {
             PF pf = new PF();
             PJ pj = new PJ();
@@ -66,26 +70,34 @@ public class AuthService {
             Telefones aux = daoTelefones.select(telefones.getNumero());
             if (aux == null || !aux.getDdd().equals(telefones.getDdd()))
                 daoTelefones.insert(telefones);
-            if (t != 'b') {
-                System.out.println("Selecione o banco em que a conta vai ser aberta:");
-                util.mostrarBancos();
-                int i;
-                boolean valido = false;
-                do {
-                    i = in.nextInt();
-                    in.nextLine();
-                    if (daoBancos.select(i) == null)
-                        System.out.println("Digite um numero valido");
-                    else
-                        valido = true;
-                } while (!valido);
-                contaService.novaConta(cliente, i);
-            }
+            if (t != 'b')
+                contaService.novaConta(cliente, 1);
             return cliente;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public Clientes login() {
+        System.out.println("Digite o CPF ou CNPJ:");
+        String identificacao = in.nextLine();
+        PF pf = daoPF.select(identificacao);
+        PJ pj;
+        if (pf == null) {
+            pj = daoPJ.select(identificacao);
+            if (pj == null)
+                System.out.println("Nao existe um cadastro com essa identificacao");
+            else {
+                System.out.println("Bem vindo(a) de volta " + pj.getRazao());
+                return daoClientes.select(pj.getIdCliente());
+            }
+        }
+        else {
+            System.out.println("Bem vindo(a) de volta " + pf.getNome());
+            return daoClientes.select(pf.getIdCliente());
+        }
+        return null;
     }
 
     private Telefones criarTelefone() {

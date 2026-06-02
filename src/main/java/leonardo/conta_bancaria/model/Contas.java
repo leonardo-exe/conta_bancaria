@@ -2,6 +2,8 @@ package leonardo.conta_bancaria.model;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @ToString
 @NoArgsConstructor
 @Getter
@@ -13,4 +15,5 @@ public class Contas {
     int idCliente;
     int idAgencia;
     String dataAbertura;
+    BigDecimal saldo;
 }

@@ -1,8 +1,3 @@
-create view view_bancos as
-select b.id, p.razao
-from Bancos b
-inner join PJ p on b.id = p.id_cliente;
-
 create view view_enderecos as
 select e.id, e.numero, l.logradouro, b.bairro, c.cidade, es.sigla
 from Enderecos e
@@ -15,3 +10,9 @@ create view endereco_agencias as
 select a.numero_agencia, a.id_banco, v.numero, v.logradouro, v.bairro, v.cidade, v.sigla
 from Agencias a
 inner join view_enderecos v on a.id_endereco = v.id;
+
+create view extrato as
+select c.numero_conta, m.valor, m.data_movimentacao, t.tipo_transacao
+from Contas c
+inner join Movimentacoes m on c.id = m.id_conta
+inner join Transacoes t on m.id_transacao = t.id;

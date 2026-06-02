@@ -1,5 +1,6 @@
 package leonardo.conta_bancaria;
 
+import leonardo.conta_bancaria.controller.Controller;
 import leonardo.conta_bancaria.dao.*;
 import leonardo.conta_bancaria.dto.*;
 import leonardo.conta_bancaria.model.*;
@@ -18,11 +19,11 @@ public class ContaBancariaApplication implements CommandLineRunner {
     }
 
     @Autowired
-    private MovimentacoesService movimentacoesService;
+    private Controller controller;
 
     @Override
     @NullMarked
     public void run(String... args) throws Exception {
-       movimentacoesService.transacao(1);
+        controller.init();
     }
 }

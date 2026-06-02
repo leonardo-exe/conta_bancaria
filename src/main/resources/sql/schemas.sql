@@ -81,6 +81,7 @@ create table Contas (
     id_cliente int,
     id_agencia int,
     data_abertura varchar(8),
+    saldo decimal,
     foreign key(id_cliente) references clientes(id),
     foreign key(id_agencia) references agencias(id)
 );
@@ -94,13 +95,12 @@ create table Investimentos (
     rendimento varchar(32)
 );
 create table Movimentacoes (
-    id_conta1 int,
-    id_conta2 int,
+    id_conta int,
+    contadestino varchar(64),
     id_transacao int,
     valor decimal,
     data_movimentacao varchar(8),
-    foreign key(id_conta1) references contas(id),
-    foreign key(id_conta2) references contas(id),
+    foreign key(id_conta) references contas(id),
     foreign key(id_transacao) references transacoes(id)
 );
 create table Investidos (

@@ -41,19 +41,7 @@ public class AgenciaService {
         try {
             System.out.println("Cadastro agência");
             int endereco = authService.criarEndereco();
-            System.out.println("Selecione o banco ao qual a agencia pertence:");
-            util.mostrarBancos();
-            boolean valido = false;
-            int i;
-            do {
-                i = in.nextInt();
-                in.nextLine();
-                if (daoAgencias.selectId(i) == null)
-                    System.out.println("Digite um numero valido");
-                else
-                    valido = true;
-            } while (!valido);
-            Agencias agencia = new Agencias(-1, util.gerarNum(1), endereco, i);
+            Agencias agencia = new Agencias(-1, util.gerarNum(1), endereco, 1);
             daoAgencias.insert(agencia);
         }
         catch (Exception e) {

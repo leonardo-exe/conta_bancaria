@@ -10,8 +10,8 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 public class Movimentacoes {
-    int idConta1;
-    int idConta2;
+    int idConta;
+    String contadestino;
     int idTransacao;
     BigDecimal valor;
     String dataMovimentacao;

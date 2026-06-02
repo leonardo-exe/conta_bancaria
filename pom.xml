@@ -117,6 +117,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>NIMU</finalName>
 	</build>
 
 </project>
